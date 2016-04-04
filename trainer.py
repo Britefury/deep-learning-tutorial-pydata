@@ -337,6 +337,12 @@ class Trainer (object):
         if state_saved:
             self._restore_state(best_state)
 
+        if self.verbosity != VERBOSITY_BATCH and self.verbosity != VERBOSITY_EPOCH:
+            final_train_results = all_train_results[-1] if len(all_train_results) > 0 else None
+            self._log_epoch_results(epoch, None, final_train_results,
+                                    best_validation_results, test_results)
+
+
         return TrainingResults(
             train_results=all_train_results,
             validation_results=all_val_results,
