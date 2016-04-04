@@ -326,6 +326,8 @@ class Trainer (object):
             elif self.verbosity == VERBOSITY_MINIMAL:
                 if validation_improved:
                     self._log('*')
+                elif validated:
+                    self._log('-')
                 else:
                     self._log('.')
 
