@@ -261,6 +261,8 @@ class Trainer (object):
         all_val_results = [] if val_set is not None and self.eval_batch_fn is not None else None
         all_test_results = [] if test_set is not None and self.eval_batch_fn is not None else None
 
+        train_start_time = time.time()
+
         while epoch < min(stop_at_epoch, self.num_epochs):
             epoch_start_time = time.time()
 
@@ -334,12 +336,15 @@ class Trainer (object):
                 all_test_results.append(test_results)
             epoch += 1
 
+        train_end_time = time.time()
+
         if state_saved:
             self._restore_state(best_state)
 
         if self.verbosity != VERBOSITY_BATCH and self.verbosity != VERBOSITY_EPOCH:
             final_train_results = all_train_results[-1] if len(all_train_results) > 0 else None
-            self._log_epoch_results(epoch, None, final_train_results,
+            self._log("Final result:")
+            self._log_epoch_results(epoch, train_end_time - train_start_time, final_train_results,
                                     best_validation_results, test_results)
 
 
