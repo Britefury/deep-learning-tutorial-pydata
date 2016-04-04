@@ -70,13 +70,13 @@ if __name__ == '__main__':
                     "'cnn533' for a CNN with 5c32-p2-3c32-3c32-p2-fc256-fc10 architecture, "
                     "'dcnn' for a CNN with 3c32-3c32-p2-3c32-3c32-p2-fc256-fc10 architecture")
     ap.add_argument('--epochs', type=str, default='2000', help='maximum number of epochs to train for')
-    ap.add_argument('--min_epochs', type=str, default='40', help='minimum number of epochs to train for, can be a list')
-    ap.add_argument('--improve_epochs', type=str, default='40',
+    ap.add_argument('--min_epochs', type=str, default='100', help='minimum number of epochs to train for, can be a list')
+    ap.add_argument('--improve_epochs', type=str, default='500,250,250,250,250,250,250,250,250,250',
                     help='if no improvement in validation error detected after this number of epochs, '
                          'stop training, can be a list')
     ap.add_argument('--subset_sizes', type=str, default='500,1000,1500,2000,2500,3000,3500,4000,4500,5000',
                     help='the sequence of subset sizes that define how the dataset grows, default = 500,100,..,5000')
-    ap.add_argument('--val_intervals', type=str, default='500,250,250,250,250,250,250,250,250,250',
+    ap.add_argument('--val_intervals', type=str, default='50,25,16,12,10,8,7,6,6,5',
                     help='the sequence of validation intervals that define how often the validation score should be computed, '
                          'each interval is a number of epochs, default = 50,25,16,...5; geometric scaling')
     ap.add_argument('--batchsize', type=int, default=500, help='batch size, default=500')
