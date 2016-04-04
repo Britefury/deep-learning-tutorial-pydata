@@ -231,6 +231,8 @@ def active_learning_image_classifier(sample_chooser, model_builder, N_train, bat
             # Train
             res = clf.trainer.train(train_ds, val_ds, test_ds, batchsize=batchsize)
 
+        print ''
+
         validation_error_history.append((indices_labelled.shape[0], res.best_validation_results[1]))
         test_error_history.append((indices_labelled.shape[0], res.final_test_results[1]))
 
