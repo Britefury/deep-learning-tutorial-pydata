@@ -160,7 +160,7 @@ class ImageClassifier (AbstractClassifier):
         return len(self.upper_layers)
 
 
-    def predict_prob(self, X, batchsize=500, temperature=None):
+    def predict_prob(self, X, batchsize=500, temperature=None, batch_xform_fn=None):
         """
         Predict probabilities for input samples
         :param X: input samples
@@ -172,6 +172,8 @@ class ImageClassifier (AbstractClassifier):
         if temperature is not None:
             self.softmax.temperature = temperature
         for batch in self.trainer.batch_iterator([X], batchsize=batchsize, shuffle=False):
+            if batch_xform_fn is not None:
+                batch = batch_xform_fn(batch)
             y_batch = self._predict_prob_fn(batch[0])
             y.append(y_batch)
         y = np.concatenate(y, axis=0)
@@ -180,6 +182,6 @@ class ImageClassifier (AbstractClassifier):
         return y
 
 
-    def predict_cls(self, X, batchsize=500):
-        prob = self.predict_prob(X, batchsize=batchsize)
+    def predict_cls(self, X, batchsize=500, batch_xform_fn=None):
+        prob = self.predict_prob(X, batchsize=batchsize, batch_xform_fn=batch_xform_fn)
         return np.argmax(prob, axis=1)

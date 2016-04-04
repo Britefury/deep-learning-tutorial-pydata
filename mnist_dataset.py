@@ -29,3 +29,7 @@ class MNISTTrainValTest (object):
         train = MNIST(which_sets=('train',), subset=list(train_set_indices), load_in_memory=False)
 
         return train, self.val, self.test
+
+
+def train_val_test_size():
+    return 50000, 10000, 10000

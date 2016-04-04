@@ -56,11 +56,12 @@ def main(model='lenet', num_epochs=500, min_epochs=200, improve_epochs=250, batc
 if __name__ == '__main__':
     ap = argparse.ArgumentParser('MNIST neural net trainer')
     ap.add_argument('--model', type=str, default='dcnn',
-                    help="Model type; 'mlp' for a simple Multi-Layer Perceptron (MLP), "
-                    "'custom_mlp:DEPTH,WIDTH,DROP_IN,DROP_HID' for an MLP "
-                    "with DEPTH hidden layers of WIDTH units, DROP_IN"
-                    "input dropout and DROP_HID hidden dropout,"
-                    "'cnn' for a CNN with 5c32-p2-5c32-p2-fc256-fc10 architecture,"
+                    help="Model type; "
+                    "'logit' for a logistic regression model, "
+                    "'mlp64' for a Multi-Layer Perceptron (MLP) with a single 64 unit layer, "
+                    "'mlp256_256' for a Multi-Layer Perceptron (MLP) with two 256 unit layers, "
+                    "'lenet' for a convolutional network based on the LeNet architecture (5c20-p2-5c50-p2-fc256-fc10), "
+                    "'cnn533' for a CNN with 5c32-p2-3c32-3c32-p2-fc256-fc10 architecture, "
                     "'dcnn' for a CNN with 3c32-3c32-p2-3c32-3c32-p2-fc256-fc10 architecture")
     ap.add_argument('--epochs', type=int, default=500, help='number of epochs to train for')
     ap.add_argument('--min_epochs', type=int, default=200, help='minimum number of epochs to train for')
