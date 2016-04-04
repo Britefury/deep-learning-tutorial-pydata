@@ -171,7 +171,7 @@ class ImageClassifier (AbstractClassifier):
         y = []
         if temperature is not None:
             self.softmax.temperature = temperature
-        for batch in self.trainer.batch_iterator([X], batchsize=batchsize, shuffle=False):
+        for batch in self.trainer.batch_iterator(X, batchsize=batchsize, shuffle=False):
             if batch_xform_fn is not None:
                 batch = batch_xform_fn(batch)
             y_batch = self._predict_prob_fn(batch[0])
