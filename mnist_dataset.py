@@ -33,3 +33,11 @@ class MNISTTrainValTest (object):
 
 def train_val_test_size():
     return 50000, 10000, 10000
+
+
+def xform_mnist_batch(batch):
+    X, y = batch
+    X = (X / 255.0).astype(np.float32)
+    return X, y[:,0]
+
+

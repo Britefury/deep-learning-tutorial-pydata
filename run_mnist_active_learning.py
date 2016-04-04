@@ -39,7 +39,8 @@ def main(model='lenet', num_epochs=500, min_epochs=100, improve_epochs=50,
                                                          refine=refine, datasets_fn=mnist.datasets, subset_sizes=subset_sizes,
                                                          num_epochs=num_epochs,
                                                          min_epochs=min_epochs, improve_epochs=improve_epochs,
-                                                         validation_intervals=validation_intervals)
+                                                         validation_intervals=validation_intervals,
+                                                         batch_xform_fn=mnist_dataset.xform_mnist_batch)
 
     print('Results:')
     print('N-train\t\tErr')

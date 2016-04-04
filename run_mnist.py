@@ -9,12 +9,6 @@ import numpy as np
 import mnist_dataset, mnist_architecture, image_classifier, trainer, utils
 
 
-def xform_batch(batch):
-    X, y = batch
-    X = (X / 255.0).astype(np.float32)
-    return X, y[:,0]
-
-
 def main(model='lenet', num_epochs=500, min_epochs=200, improve_epochs=250, batchsize=500,
          training_subset=None, aug_factor=1, out_path=None):
     # Load the dataset
@@ -39,7 +33,7 @@ def main(model='lenet', num_epochs=500, min_epochs=200, improve_epochs=250, batc
     clf.trainer.report(verbosity=trainer.VERBOSITY_EPOCH)
 
     # Set data transformation function
-    clf.trainer.data_xform_fn(batch_xform_fn=xform_batch)
+    clf.trainer.data_xform_fn(batch_xform_fn=mnist_dataset.xform_mnist_batch)
 
     # Set training length
     clf.trainer.train_for(num_epochs=num_epochs, min_epochs=min_epochs, val_improve_num_epochs=improve_epochs,
