@@ -7,9 +7,9 @@ import utils
 
 class MNISTTrainValTest (object):
     def __init__(self):
-        self.train = MNIST(which_sets=['train'], subset=slice(0, 50000), load_in_memory=False)
-        self.val = MNIST(which_sets=['train'], subset=slice(50000, None), load_in_memory=False)
-        self.test = MNIST(which_sets=['test'], load_in_memory=False)
+        self.train = MNIST(which_sets=['train'], subset=slice(0, 50000), load_in_memory=True)
+        self.val = MNIST(which_sets=['train'], subset=slice(50000, None), load_in_memory=True)
+        self.test = MNIST(which_sets=['test'], load_in_memory=True)
 
         self.train_set_indices = np.arange(50000)
         d_y = MNIST(which_sets=['train'], sources=['targets'], subset=slice(0, 50000),
@@ -26,7 +26,7 @@ class MNISTTrainValTest (object):
         if train_subset_indices is not None:
             train_set_indices = self.train_set_indices[train_subset_indices]
 
-        train = MNIST(which_sets=('train',), subset=list(train_set_indices), load_in_memory=False)
+        train = MNIST(which_sets=('train',), subset=list(train_set_indices), load_in_memory=True)
 
         return train, self.val, self.test
 
