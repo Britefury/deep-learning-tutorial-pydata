@@ -72,14 +72,18 @@ class AbstractClassifier (object):
 
 
 class ImageClassifier (AbstractClassifier):
-    def __init__(self, input_var, target_var, final_layer):
+    def __init__(self, input_var, target_var, final_layer, updates_fn=None):
         """
         Constructor - construct an `ImageClassifier` instance given variables for
         input, target and a final layer (a Lasagne layer)
         :param input_var: input variable, a Theano variable
         :param target_var: target variable, a Theano variable
         :param final_layer: final layer, a Lasagne layer
-        :return:
+        :param updates_fn: [optional] a function of the form `fn(cost, params) -> updates` that
+            generates update expressions given the cost and the parameters to update using
+            an optimisation technique e.g. Nesterov Momentum:
+            `lambda cost, params: lasagne.updates.nesterov_momentum(cost, params,
+                learning_rate=0.002, momentum=0.9)`
         """
         self.input_var = input_var
         self.target_var = target_var
@@ -103,8 +107,11 @@ class ImageClassifier (AbstractClassifier):
         # parameters at each training step. Here, we'll use Stochastic Gradient
         # Descent (SGD) with Nesterov momentum, but Lasagne offers plenty more.
         params = lasagne.layers.get_all_params(network, trainable=True)
-        updates = lasagne.updates.nesterov_momentum(
-                loss.mean(), params, learning_rate=0.002, momentum=0.9)
+        if updates_fn is None:
+            updates = lasagne.updates.nesterov_momentum(
+                    loss.mean(), params, learning_rate=0.01, momentum=0.9)
+        else:
+            updates = updates_fn(loss.mean(), params)
 
         # EVALUATION - VALIDATION, TEST, PREDICTION
 
