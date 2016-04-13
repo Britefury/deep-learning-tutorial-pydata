@@ -64,7 +64,7 @@ class VGGModel (object):
         Subtract mean value.
 
         :param im: input RGB image as numpy array (height, width, channel)
-        :param image_size: output image size, default=224
+        :param image_size: output image size, default=224. If `None`, scaling and cropping will not be done.
         :return: (raw_image, vgg_image) where `raw_image` is the scaled and cropped image with dtype=uint8 and
             `vgg_image` is the image with BGR channel order and axes (sample, channel, height, width).
         """
@@ -73,34 +73,31 @@ class VGGModel (object):
             im = im[:, :, np.newaxis]
             im = np.repeat(im, 3, axis=2)
 
-        # Scale the image so that its smallest dimension is the desired size
-        h, w, _ = im.shape
-        if h < w:
-            im = skimage.transform.resize(im, (image_size, w * image_size / h), preserve_range=True)
-        else:
-            im = skimage.transform.resize(im, (h * image_size / w, image_size), preserve_range=True)
+        if image_size is not None:
+            # Scale the image so that its smallest dimension is the desired size
+            h, w, _ = im.shape
+            if h < w:
+                if h != image_size:
+                    im = skimage.transform.resize(im, (image_size, w * image_size / h), preserve_range=True)
+            else:
+                if w != image_size:
+                    im = skimage.transform.resize(im, (h * image_size / w, image_size), preserve_range=True)
 
-        # Crop the central `image_size` x `image_size` region of the image
-        h, w, _ = im.shape
-        im = im[h//2 - image_size // 2:h // 2 + image_size // 2, w // 2 - image_size // 2:w // 2 + image_size // 2]
+            # Crop the central `image_size` x `image_size` region of the image
+            h, w, _ = im.shape
+            im = im[h//2 - image_size // 2:h // 2 + image_size // 2, w // 2 - image_size // 2:w // 2 + image_size // 2]
 
         # Convert to uint8 type
         rawim = np.copy(im).astype('uint8')
 
-        # Shuffle axes from (height, width, channel) to (channel, height, width)
-        im = np.swapaxes(np.swapaxes(im, 1, 2), 0, 1)
-
         # Images come in RGB channel order, while VGG net expects BGR:
-        im = im[::-1, :, :]
-
-        # If necessary, add 2 axes to the mean so that it will broadcast when we subtract
-        # it from the image
-        image_mean = self.mean_value
-        if len(image_mean.shape) == 1:
-            image_mean = image_mean[:,None,None]
+        im = im[:, :, ::-1]
 
         # Subtract the mean
-        im = im - image_mean
+        im = im - self.mean_value
+
+        # Shuffle axes from (height, width, channel) to (channel, height, width)
+        im = np.swapaxes(np.swapaxes(im, 1, 2), 0, 1)
 
         # Add the sample axis to the image; (channel, height, width) -> (sample, channel, height, width)
         im = im[np.newaxis]
@@ -108,16 +105,31 @@ class VGGModel (object):
         return rawim, floatX(im)
 
 
-    @classmethod
-    def with_params_from_model(cls, model):
+    def inv_prepare_image(self, image):
         """
-        Construct a model re-using parameters from another model
-        :param model: model to get parameters from
+        Perform the inverse of `prepare_image`; usually used to display an image prepared for classification
+        using a VGG net.
 
-        :return: the new model
+        :param im: the image to process
+        :return: processed image
         """
-        param_values = lasagne.layers.get_all_param_values(model.network[model.final_layer_name])
-        return cls(model.mean_value, model.class_names, model.model_name, param_values)
+        if len(image.shape) == 4:
+            # We have a sample dimension; can collapse it if there is only 1 sample
+            if image.shape[0] == 1:
+                image = image[0]
+            else:
+                raise ValueError('Sample dimension has > 1 samples ({})'.format(image.shape[0]))
+
+        # Move the channel axis: (C, H, W) -> (H, W, C)
+        image = np.rollaxis(image, 0, 3)
+        # Add the mean
+        image = image + self.mean_value
+        # Convert to uint8 type
+        image = image.astype('uint8')
+        # Flip channel order BGR to RGB
+        image = image[:,:,::-1]
+        return image
+
 
     @classmethod
     def from_loaded_params(cls, loaded_params):
