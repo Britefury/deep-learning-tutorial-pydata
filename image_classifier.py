@@ -156,9 +156,9 @@ class ImageClassifier (AbstractClassifier):
         items.append('Epoch {}/{} took {:.2f}s'.format(epoch_number + 1, self.trainer.num_epochs, delta_time))
         items.append('train loss={:.6f}'.format(train_results[0]))
         if val_results is not None:
-            items.append('val loss={:.6f}, val err={:.2f}%'.format(val_results[0], val_results[1]*100.0))
+            items.append('val loss={:.6f}, val err={:.2%}'.format(val_results[0], val_results[1]))
         if test_results is not None:
-            items.append('test err={:.2f}%'.format(test_results[1]*100.0))
+            items.append('test err={:.2%}'.format(test_results[1]))
         return ', '.join(items)
 
 
