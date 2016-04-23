@@ -56,6 +56,11 @@ class VGGModel (object):
     def build_network(cls):
         raise NotImplementedError('Abstract for type {}'.format(cls))
 
+    
+    @property
+    def final_layer(self):
+        return self.network[self.final_layer_name]
+
 
     def prepare_image(self, im, image_size=224):
         """
