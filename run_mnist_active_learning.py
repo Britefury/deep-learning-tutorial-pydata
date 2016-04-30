@@ -5,6 +5,8 @@ from __future__ import print_function
 import csv
 import argparse
 
+import numpy as np
+
 import mnist_dataset, mnist_architecture, active_learning, cmdline_helpers, utils
 
 
@@ -12,7 +14,7 @@ def main(model='lenet', num_epochs=500, min_epochs=100, improve_epochs=50,
          subset_sizes=None, validation_intervals=1,
          batchsize=500,
          sample_chooser=None, refine=False, out_path=None,
-         csv_path=None):
+         csv_path=None, indices_out_path=None):
     if subset_sizes is None:
         subset_sizes = [500, 1000, 1500, 2000, 2500, 3000, 3500, 4000, 4500, 5000]
 
@@ -33,7 +35,7 @@ def main(model='lenet', num_epochs=500, min_epochs=100, improve_epochs=50,
 
     mnist = mnist_dataset.MNISTTrainValTest()
 
-    test_error_history, trainer = \
+    trainer, indices_labelled_history, validation_error_history, test_error_history = \
         active_learning.active_learning_image_classifier(sample_chooser=sample_chooser, model_builder=builder, N_train=N_train,
                                                          batchsize=batchsize,
                                                          refine=refine, datasets_fn=mnist.datasets, subset_sizes=subset_sizes,
@@ -44,18 +46,21 @@ def main(model='lenet', num_epochs=500, min_epochs=100, improve_epochs=50,
 
     print('Results:')
     print('N-train\t\tErr')
-    for n_train, err in test_error_history:
-        print('{0}\t\t{1:.2f}%'.format(n_train, err * 100.0))
+    for labelled_indices, err in zip(indices_labelled_history, test_error_history):
+        print('{0}\t\t{1:.2f}%'.format(labelled_indices.shape[0], err * 100.0))
 
     if csv_path is not None:
         writer = csv.writer(open(csv_path, 'w'))
         writer.writerow(['# samples', 'Error %'])
-        for n_train, err in test_error_history:
-            writer.writerow([n_train, err * 100.0])
+        for labelled_indices, err in zip(indices_labelled_history, test_error_history):
+            writer.writerow([labelled_indices.shape[0], err * 100.0])
 
     if out_path is not None:
         print('Saving model to {0} ...'.format(out_path))
         utils.save_model(out_path, trainer.network)
+
+    if indices_out_path is not None:
+        np.save(indices_out_path, indices_labelled_history[-1])
 
 
 
@@ -90,6 +95,7 @@ if __name__ == '__main__':
     ap.add_argument('--refine', action='store_true', help='refine existing model when adding new data rather than train new')
     ap.add_argument('--out_path', type=str, default=None, help='path to write the model to when training is complete')
     ap.add_argument('--csv_path', type=str, default=None, help='path for CSV file to write the training results')
+    ap.add_argument('--indices_out_path', type=str, default=None, help='path to write the labelled sample indices to to when training is complete')
     args = ap.parse_args()
 
     chooser = active_learning.make_chooser(args.chooser)
@@ -99,4 +105,4 @@ if __name__ == '__main__':
          subset_sizes=args.subset_sizes, validation_intervals=args.val_intervals,
          batchsize=args.batchsize,
          sample_chooser=chooser, refine=args.refine,
-         out_path=args.out_path, csv_path=args.csv_path)
+         out_path=args.out_path, csv_path=args.csv_path, indices_out_path=args.indices_out_path)
