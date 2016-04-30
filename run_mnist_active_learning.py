@@ -42,7 +42,8 @@ def main(model='lenet', num_epochs=500, min_epochs=100, improve_epochs=50,
                                                          num_epochs=num_epochs,
                                                          min_epochs=min_epochs, improve_epochs=improve_epochs,
                                                          validation_intervals=validation_intervals,
-                                                         batch_xform_fn=mnist_dataset.xform_mnist_batch)
+                                                         batch_xform_fn=mnist_dataset.xform_mnist_batch,
+                                                         n_train_repetitions_in_case_of_failure=3)
 
     print('Results:')
     print('N-train\t\tErr')

@@ -56,7 +56,7 @@ class TrainingFailedException (Exception):
     :var parameters_reset: a boolean indicating if the network parameters were successfully reset to the initial state
     """
     def __init__(self, epoch, reason, parameters_reset):
-        super(TrainingFailedException, self).__init__(message='Training failed at epoch {}: {}'.format(epoch, reason))
+        super(TrainingFailedException, self).__init__('Training failed at epoch {}: {}'.format(epoch, reason))
         self.epoch = epoch
         self.reason = reason
         self.parameters_reset = parameters_reset
