@@ -472,7 +472,9 @@ class Trainer (object):
                 train_scheme = ShuffledScheme(examples=dataset.num_examples, batch_size=batchsize)
             else:
                 train_scheme = SequentialScheme(examples=dataset.num_examples, batch_size=batchsize)
-            stream = DataStream(dataset=dataset, iteration_scheme=train_scheme)
+            # Use `DataStream.default_stream`, otherwise the default transformers defined by the dataset *wont*
+            # be applied
+            stream = DataStream.default_stream(dataset=dataset, iteration_scheme=train_scheme)
             if self.fuel_stream_xform_fn is not None:
                 stream = self.fuel_stream_xform_fn(stream)
             return stream.get_epoch_iterator()

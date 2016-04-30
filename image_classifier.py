@@ -7,9 +7,6 @@ import theano.tensor as T
 
 import lasagne
 
-from fuel.schemes import ShuffledScheme, SequentialScheme
-from fuel.streams import DataStream
-
 import trainer, utils
 
 
