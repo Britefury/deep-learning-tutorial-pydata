@@ -1,3 +1,7 @@
+"""
+This module provides
+"""
+
 import numpy as np
 
 import image_classifier, trainer
@@ -93,7 +97,8 @@ def make_chooser(desc):
 def active_learning_image_classifier(sample_chooser, model_builder, N_train, batchsize,
                                      refine, datasets_fn, subset_sizes,
                                      num_epochs, min_epochs, improve_epochs,
-                                     validation_intervals, batch_xform_fn=None):
+                                     validation_intervals, batch_xform_fn=None,
+                                     n_train_repetitions_in_case_of_failure=1):
     """
     Train an image classifier using active learning.
 
@@ -129,7 +134,13 @@ def active_learning_image_classifier(sample_chooser, model_builder, N_train, bat
         (see `Trainer.train_for(validation_interval)`)
     :param batch_xform_fn: [optional] batch transformation function to transform a batch
         before using it
-    :return:
+    :param n_train_repetitions_in_case_of_failure: if training fails with a `TrainingFailedException`,
+        this is the number of times training will be re-attempted
+    :return: tuple `(classifier, indices_labelled_history, validation_error_history, test_error_history)`
+        where `classifier` is the classifier trained in the final active learning iteration,
+        `indices_labelled_history` is a list of numpy arrays - one for each active learning iteration - where each
+        array gives the indices of the samples that were labelled in that iteration,
+        `validation_error_history` is a list of validation errors, where each
     """
     assert len(num_epochs) == len(subset_sizes)
     assert len(min_epochs) == len(subset_sizes)
@@ -139,9 +150,10 @@ def active_learning_image_classifier(sample_chooser, model_builder, N_train, bat
     # Classifier
     clf = None
 
-    # Error history for reporting
+    # Error history for reporting, along with the history of the indices of samples that were labelled
     validation_error_history = []
     test_error_history = []
+    indices_labelled_history = []
 
     best_val_loss = best_val_err = None
 
@@ -209,32 +221,48 @@ def active_learning_image_classifier(sample_chooser, model_builder, N_train, bat
                                   val_improve_num_epochs=N_improve_epochs, validation_interval=val_interval)
 
             # Train
-            res = clf.trainer.train(train_ds, val_ds, test_ds, batchsize=batchsize)
+            try:
+                res = clf.trainer.train(train_ds, val_ds, test_ds, batchsize=batchsize)
+            except trainer.TrainingFailedException as e:
+                # If `TrainingFailedException` is raised; just do nothing; its unlikely that trying again will
+                # change anything
+                pass
         else:
-            # Build the image classifier for the given model builder
-            clf = image_classifier.ImageClassifier.for_model(model_builder)
+            # Training repetition loop: start training over from scratch until it succeeds, which it should most
+            # of the time
+            for train_rep in range(n_train_repetitions_in_case_of_failure):
+                # Build the image classifier for the given model builder
+                clf = image_classifier.ImageClassifier.for_model(model_builder)
 
-            # Set verbosity
-            clf.trainer.report(verbosity=trainer.VERBOSITY_MINIMAL)
+                # Set verbosity
+                clf.trainer.report(verbosity=trainer.VERBOSITY_MINIMAL)
 
-            # Set data transformation function
-            clf.trainer.data_xform_fn(batch_xform_fn=batch_xform_fn)
+                # Set data transformation function
+                clf.trainer.data_xform_fn(batch_xform_fn=batch_xform_fn)
 
-            print('Training with {0} samples for min {1} epochs max {2} epochs, terminating if no improvement after '
-                  '{3} epochs validating every {4}...'.format(train_ds.num_examples, min_N_epochs, N_epochs,
-                                                              N_improve_epochs, val_interval))
+                print('Training with {0} samples for min {1} epochs max {2} epochs, terminating if no improvement after '
+                      '{3} epochs validating every {4}...'.format(train_ds.num_examples, min_N_epochs, N_epochs,
+                                                                  N_improve_epochs, val_interval))
 
-            # Set training length
-            clf.trainer.train_for(num_epochs=N_epochs, min_epochs=min_N_epochs,
-                                  val_improve_num_epochs=N_improve_epochs, validation_interval=val_interval)
+                # Set training length
+                clf.trainer.train_for(num_epochs=N_epochs, min_epochs=min_N_epochs,
+                                      val_improve_num_epochs=N_improve_epochs, validation_interval=val_interval)
 
-            # Train
-            res = clf.trainer.train(train_ds, val_ds, test_ds, batchsize=batchsize)
+                # Train
+                try:
+                    res = clf.trainer.train(train_ds, val_ds, test_ds, batchsize=batchsize)
+                except trainer.TrainingFailedException as e:
+                    # Training failed: let the training repetition loop try again
+                    pass
+                else:
+                    # Training succeeded: break out of the training repetition loop
+                    break
 
         print ''
 
-        validation_error_history.append((indices_labelled.shape[0], res.best_validation_results[1]))
-        test_error_history.append((indices_labelled.shape[0], res.final_test_results[1]))
+        validation_error_history.append(res.best_validation_results[1])
+        test_error_history.append(res.final_test_results[1])
+        indices_labelled_history.append(indices_labelled.copy())
 
-    return test_error_history, clf
+    return clf, indices_labelled_history, validation_error_history, test_error_history
 

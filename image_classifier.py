@@ -139,13 +139,22 @@ class ImageClassifier (AbstractClassifier):
         # Construct a trainer
         self.trainer = trainer.Trainer()
         # Provide with training function
-        self.trainer.train_with(train_batch_fn=self._train_fn)
+        self.trainer.train_with(train_batch_fn=self._train_fn,
+                                train_epoch_results_check_fn=self._check_train_epoch_results)
         # Evaluate with evaluation function, the second output value - error rate - is used for scoring
         self.trainer.evaluate_with(eval_batch_fn=self._val_fn, validation_score_fn=1)
         # Set the epoch logging function
         self.trainer.report(epoch_log_fn=self._epoch_log)
         # Tell the trainer to store parameters when the validation score (error rate) is best
+        # self.trainer.retain_best_scoring_state_of_updates(updates)
         self.trainer.retain_best_scoring_state_of_network(network)
+
+
+    def _check_train_epoch_results(self, epoch, train_epoch_results):
+        if np.isnan(train_epoch_results).any():
+            return 'Training loss of NaN'
+        else:
+            return None
 
 
     def _epoch_log(self, epoch_number, delta_time, train_results, val_results, test_results):
