@@ -51,13 +51,17 @@ Then:
 
 You can also download CIFAR-10:
 
-```fuel-download cifar10
-fuel-convert cifar10```
+```
+fuel-download cifar10
+fuel-convert cifar10
+```
 
 and SVHN (the extra argument identifies the type of SVHN we are downloading):
 
-```fuel download svhn 2
-fuel-convert svhn 2```
+```
+fuel download svhn 2
+fuel-convert svhn 2
+```
 
 
 ## Notebooks for the tutorial
