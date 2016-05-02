@@ -1,0 +1,8 @@
+numpy
+matplotlib
+scikit-image
+-e git+https://github.com/Theano/Theano#egg=Theano
+-e git+https://github.com/Britefury/Lasagne#egg=Lasagne
+-e git+https://github.com/mila-udem/fuel.git#egg=fuel
+
+
