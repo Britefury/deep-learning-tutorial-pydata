@@ -5,10 +5,50 @@
 
 ## Table of Contents
 
+- Using the an Amazon AWS instance
 - Requirements
 - Downloading datasets
 - Notebooks for the tutorial
 - The Python modules
+
+
+## Using the an Amazon AWS instance
+
+For the PyData conference we are preparing an AMI image for the tutorial. To connect to the machine via SSH,
+use (we provide an SSH key to grant access):
+
+```
+ssh -i AWS-key.pem ubuntu@ec2-<machine_ip_here>.compute-1.amazonaws.com
+```
+
+Activate the Anaconda environment so that you have access to the required python modules (from the home directory):
+
+```
+source ana
+```
+
+Change into the `deep-learning-tutorial-pydata2016` directory that should contain this repo:
+
+```
+cd deep-learning-tutorial-pydata2016
+```
+
+Then start a jupyter notebook in browser-less mode:
+
+```
+jupyter notebook --no-browser
+```
+
+To access the notebook from your browser on your local machine, you need to have SSH establish
+a tunnel to the Amazon machine:
+
+```
+ssh -i AWS-key.pem -NL 8157:localhost:8888 ubuntu@<machine_ip_here>.compute-1.amazonaws.com
+```
+
+This will open port 8157 on your local machine. The Jupyter notebook should now be accessible
+from your browser at the address `http://localhost:8157`.
+
 
 
 ## Requirements
