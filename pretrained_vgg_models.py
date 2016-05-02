@@ -129,6 +129,8 @@ class VGGModel (object):
         image = np.rollaxis(image, 0, 3)
         # Add the mean
         image = image + self.mean_value
+        # Clip to [0,255] range
+        image = image.clip(0.0, 255.0)
         # Convert to uint8 type
         image = image.astype('uint8')
         # Flip channel order BGR to RGB
