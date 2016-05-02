@@ -18,10 +18,14 @@ For the PyData conference we are preparing an AMI image for the tutorial. To con
 use (we provide an SSH key to grant access):
 
 ```
-ssh -i AWS-key.pem ubuntu@ec2-<machine_ip_here>.compute-1.amazonaws.com
+ssh -i AWS-key.pem -L 8157:localhost:8888 ubuntu@ec2-<machine_ip_here>.compute-1.amazonaws.com
 ```
 
-Activate the Anaconda environment so that you have access to the required python modules (from the home directory):
+Note that the above command sets up port forwarding so that Jupyter notebooks accessible via port 8888
+on the Amazon AWS machine will be accessible via port 8157 on your local machine.
+
+From within the SSH session, activate the Anaconda environment so that you have access to the required
+python modules (from the home directory):
 
 ```
 source ana
@@ -39,15 +43,7 @@ Then start a jupyter notebook in browser-less mode:
 jupyter notebook --no-browser
 ```
 
-To access the notebook from your browser on your local machine, you need to have SSH establish
-a tunnel to the Amazon machine:
-
-```
-ssh -i AWS-key.pem -NL 8157:localhost:8888 ubuntu@<machine_ip_here>.compute-1.amazonaws.com
-```
-
-This will open port 8157 on your local machine. The Jupyter notebook should now be accessible
-from your browser at the address `http://localhost:8157`.
+The Jupyter notebook should now be accessible from your browser at the address `http://localhost:8157`.
 
 
 
