@@ -51,7 +51,7 @@ def main(model='lenet', num_epochs=500, min_epochs=100, improve_epochs=50,
         print('{0}\t\t{1:.2f}%'.format(labelled_indices.shape[0], err * 100.0))
 
     if csv_path is not None:
-        writer = csv.writer(open(csv_path, 'w'))
+        writer = csv.writer(open(csv_path, 'wb'))
         writer.writerow(['# samples', 'Error %'])
         for labelled_indices, err in zip(indices_labelled_history, test_error_history):
             writer.writerow([labelled_indices.shape[0], err * 100.0])
