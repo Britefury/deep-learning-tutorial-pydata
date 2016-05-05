@@ -14,8 +14,16 @@
 
 ## Using the an Amazon AWS instance
 
-For the PyData conference we are preparing an AMI image for the tutorial. To connect to the machine via SSH,
-use (we provide an SSH key to grant access):
+### Acquiring the Amazon AMI image yourself
+
+We have made the AMI publically available; it's ID is `ami-5f789e32` and it is named
+`PyData London 2016 deep learning adv tutorial - Ubuntu-14.04 Anaconda2-4.0.0 Cuda-7.5 cuDNN-5 Theano-0.8 Lasagne Fuel`.
+
+### Using the AMI.
+
+Once the instance has been launched, connect to the machine via SSH, using the key you have downloaded;
+here we assume it is in the file `AWS-key.pem` and it is in the current working directory.
+Connect to the machine as follows:
 
 ```
 ssh -i AWS-key.pem -L 8157:localhost:8888 ubuntu@ec2-<machine_ip_here>.compute-1.amazonaws.com
