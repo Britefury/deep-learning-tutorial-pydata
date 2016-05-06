@@ -45,6 +45,12 @@ Change into the `deep-learning-tutorial-pydata2016` directory that should contai
 cd deep-learning-tutorial-pydata2016
 ```
 
+*OPTIONAL:* If you want to update the repo:
+
+```
+git pull
+```
+
 Then start a jupyter notebook in browser-less mode:
 
 ```
@@ -93,14 +99,16 @@ Then:
 
 ```fuel-convert mnist```
 
-You can also download CIFAR-10:
+#### Download OPTIONAL datasets (not necessary):
+
+You can also download CIFAR-10 [OPTIONAL]:
 
 ```
 fuel-download cifar10
 fuel-convert cifar10
 ```
 
-and SVHN (the extra argument identifies the type of SVHN we are downloading):
+and SVHN (the extra argument identifies the type of SVHN we are downloading) [OPTIONAL]:
 
 ```
 fuel download svhn 2
