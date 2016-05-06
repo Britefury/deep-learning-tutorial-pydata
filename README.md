@@ -101,14 +101,14 @@ Then:
 
 #### Download OPTIONAL datasets (not necessary):
 
-You can also download CIFAR-10 [OPTIONAL]:
+You can also download CIFAR-10 [OPTIONAL, multi-hundred MB download]:
 
 ```
 fuel-download cifar10
 fuel-convert cifar10
 ```
 
-and SVHN (the extra argument identifies the type of SVHN we are downloading) [OPTIONAL]:
+and SVHN (the extra argument identifies the type of SVHN we are downloading) [OPTIONAL, ~2GB download]:
 
 ```
 fuel download svhn 2
