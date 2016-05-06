@@ -148,6 +148,17 @@ class VGGModel (object):
         return cls(loaded_params['mean value'], loaded_params['synset words'], loaded_params['model name'],
                    loaded_params['param values'])
 
+    @staticmethod
+    def unpickle_from_path(path):
+        # Oh... the joys of Py2 vs Py3
+        with open(path, 'rb') as f:
+            if sys.version_info[0] == 2:
+                return pickle.load(f)
+            else:
+                u = pickle._Unpickler(f)
+                u.encoding = 'latin1'
+                return u.load()
+
 
 class VGG16Model (VGGModel):
     @classmethod
@@ -212,7 +223,7 @@ class VGG16Model (VGGModel):
     @staticmethod
     def load_params():
         download(VGG16_PATH, 'http://s3.amazonaws.com/lasagne/recipes/pretrained/imagenet/vgg16.pkl')
-        return pickle.load(open(VGG16_PATH, 'rb'))
+        return VGGModel.unpickle_from_path(VGG16_PATH)
 
     @classmethod
     def load(cls):
@@ -285,7 +296,7 @@ class VGG19Model (VGGModel):
     @staticmethod
     def load_params():
         download(VGG19_PATH, 'http://s3.amazonaws.com/lasagne/recipes/pretrained/imagenet/vgg19.pkl')
-        return pickle.load(open(VGG19_PATH, 'rb'))
+        return VGGModel.unpickle_from_path(VGG19_PATH)
 
     @classmethod
     def load(cls):
