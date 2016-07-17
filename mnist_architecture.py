@@ -127,7 +127,7 @@ def build_cnn_lenet(input_var=None):
     return network
 
 
-def build_cnn_533(input_var=None, full_dropout=False):
+def build_cnn_533(input_var=None):
     """
     Create an CNN with 3 convolutional layers, with kernel size of
     5x5, 3x3 and 3x3, with 32 filters each.
@@ -174,7 +174,7 @@ def build_cnn_533(input_var=None, full_dropout=False):
     return network
 
 
-def build_deep_cnn(input_var=None, full_dropout=False):
+def build_deep_cnn(input_var=None):
     """
     Create an CNN with 4 convolutional layers, each with
     32 filters, 3x3 in size
