@@ -16,8 +16,8 @@
 
 ### Acquiring the Amazon AMI image yourself
 
-We have made the AMI publically available; it's ID is `ami-5f789e32` and it is named
-`PyData London 2016 deep learning adv tutorial - Ubuntu-14.04 Anaconda2-4.0.0 Cuda-7.5 cuDNN-5 Theano-0.8 Lasagne Fuel`.
+We have made the AMI publically available; it's ID is `ami-e0048af7` and it is named
+`Britefury deep learning - Ubuntu-14.04 Anaconda2-4.0.0 Cuda-7.5 cuDNN-5 Theano-0.8 Lasagne Fuel`.
 
 ### Using the AMI.
 
