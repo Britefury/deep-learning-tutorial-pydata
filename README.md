@@ -1,6 +1,6 @@
 # Deep Learning Tutorial
 
-#### for PyData London 2016, by Geoffrey French
+#### by Geoff French
 
 
 ## Table of Contents
