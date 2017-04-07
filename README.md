@@ -5,11 +5,18 @@
 
 ## Table of Contents
 
+- Slides
 - Using the an Amazon AWS instance
 - Requirements
 - Downloading datasets
 - Notebooks for the tutorial
 - The Python modules
+
+
+## Slides
+
+The PyData Amsterdam 2017 slides that accompany this repo can be found on
+[Speakdeck](https://speakerdeck.com/britefury/deep-learning-advanced-techniques-tutorial-pydata-amsterdam-2017).
 
 
 ## Using the an Amazon AWS instance
