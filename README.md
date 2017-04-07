@@ -5,7 +5,7 @@
 
 ## Table of Contents
 
-- Slides
+- PyData Amsterdam 2017 slides
 - Using the an Amazon AWS instance
 - Requirements
 - Downloading datasets
